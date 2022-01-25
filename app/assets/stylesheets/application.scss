@@ -14,7 +14,6 @@
  *= require_self
  */
  // Custom bootstrap variables must be set or imported *before* bootstrap.
-@import "bootstrap";
 @import "simple_calendar";
 
 body {
@@ -86,3 +85,4 @@ body {
     border-radius: .25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+

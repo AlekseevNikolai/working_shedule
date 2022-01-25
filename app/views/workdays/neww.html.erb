@@ -1,0 +1,27 @@
+<div class="col-xl-8">
+  <div class="card mb-4">
+    <div class="card-header">Добавить смену</div>
+    <div class="card-body">
+      <%= form_for(@workday, remote: request.xhr?, html: { data: { modal: true } }) do |f| %>
+        <%= render 'shared/error_messages', object: f.object %>
+        <div class="row gx-3 mb-3">
+          <div class="col-md-6"> 
+            <%= f.label :user_id, "Сотрудник", class: "small mb-1" %>
+            <%= f.text_field :user_id, class: "form-control", placeholder: "#{current_user.first_name} #{current_user.last_name}"%>
+            <%# <%= f.select :user_id, @users, class: "form-control" %>
+          </div>
+          <div class="col-md-6"> 
+            <%= f.label :date, "Дата", class: "small mb-1" %>
+            <%= f.text_field :date, class: "form-control", placeholder: "#{@workday["date"]}"%>
+          </div>
+          <div class="col-md-6"> 
+            <%= f.label :shift_code, "Смена", class: "small mb-1" %>
+            <%# <%= f.select :shift_code, @shift_codes, class: "form-control" %>
+            <%= f.text_field :shift_code, class: "form-control", placeholder: "ГН24"%>
+          </div>
+        </div>
+        <%= f.submit "Добавить смену", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>

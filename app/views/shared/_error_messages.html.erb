@@ -1,0 +1,15 @@
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <div class="alert alert-danger">
+      <% object.errors.each do |error| %>
+        <% if error.attribute == :date %>
+          <li>Незаполнено поле даты</li>
+        <% elsif error.attribute == :shift_code %>
+          <li>Незаполнено поле смены</li>
+        <% else %>
+          <li><% error.full_message %></li>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

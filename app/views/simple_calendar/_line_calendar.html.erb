@@ -24,9 +24,14 @@
             <th><%= user.first_name%></th>
             <% days.each do |day| %>
               <%= content_tag :td, class: calendar.td_classes_for(day) do %>
-                    <% user.workdays.each do |workday| %>
-                      <%= workday.shift_code if workday[:date] == day %>
-                    <% end %>
+                <% if workday = user.workdays.find {|workday| workday["date"] == day}%>
+                  <%= link_to "#{workday.shift_code}", edit_workday_path(workday), data: {modal: true} %>
+                <% else %>
+                  <%# <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newWorkdayModal">
+                    +
+                  </button> %>
+                  <%= link_to '+', new_workday_path(:day => day), data: {modal: true}%>
+                <% end%>
               <% end %>
             <% end %>
           </tr>
@@ -35,3 +40,6 @@
     </tbody>
   </table>
 </div>
+
+                  <!-- Modal -->
+                  <%= render "workdays/new_modal" %>

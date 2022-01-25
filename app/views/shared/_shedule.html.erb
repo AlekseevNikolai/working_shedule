@@ -1,25 +1,4 @@
-<%= SimpleCalendar::LineCalendar.new(self, {events: @workdays}).render do |date, workdays| %>
+<%= SimpleCalendar::LineCalendar.new(self).render do |date| %>
 
-<% end %>
-
-<table class="table table-striped">
-    <tbody>
-      <tr>
-        <% (Date.today.at_beginning_of_month .. Date.today.end_of_month).to_a.each do |day| %>
-          <th>
-            
-            <%= day %>
-          </th>
-        <% end %>
-      </tr>
-    </tbody>
-</table>
-
-<%= form_with model: @user do |form| %>
-   <%= form.text_field :first_name %>
-   <%= form.select :city, [["Berlin", "BE"], ["Chicago", "CHI"], ["Madrid", "MD"]] %>
-   <%= fields_for :workdays, @user.workdays.first do |workdays_form| %>
-    <%= workdays_form.text_field :date%>
-  <% end %>
 <% end %>
 

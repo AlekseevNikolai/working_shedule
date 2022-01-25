@@ -1,0 +1,35 @@
+<div class="modal " id="newWorkdayModal"  aria-labelledby="newWorkdayModalLabel" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newWorkdayModalLabel">Добавить смену</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= form_for(Workday.new) do |f| %>
+        <%= render 'shared/error_messages', object: f.object %>
+        <div class="row gx-3 mb-3">
+            <div class="col-md-6"> 
+                <%= f.label :user_id, "Сотрудник", class: "small mb-1" %>
+                <%= f.text_field :user_id, class: "form-control", placeholder: "#{current_user.first_name} #{current_user.last_name}"%>
+                <%# <%= f.select :user_id, @users, class: "form-control" %>
+            </div>
+            <div class="col-md-6"> 
+                <%= f.label :date, "Дата", class: "small mb-1" %>
+                <%= f.text_field :date, class: "form-control", placeholder: "#{f.object["date"]}"%>
+            </div>
+            <div class="col-md-6"> 
+                <%= f.label :shift_code, "Смена", class: "small mb-1" %>
+                <%# <%= f.select :shift_code, @shift_codes, class: "form-control" %>
+                <%= f.text_field :shift_code, class: "form-control", placeholder: "ГН24"%>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <%= f.submit "Сохранить изменения", class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

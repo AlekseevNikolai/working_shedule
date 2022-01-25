@@ -1,7 +1,7 @@
 class SimpleCalendar::LineCalendar < SimpleCalendar::Calendar
   private
 
-  def sortedd_events()
+  def sor_events()
     {Date.new(2022, 1, 10) => [Workday.find(5)], Date.new(2022, 1, 11) => [Workday.find(6)]}
   end
 

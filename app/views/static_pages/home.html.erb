@@ -58,10 +58,12 @@
             </button>
           </div>
         </div>
-        <%= render 'shared/shedule' %>
+        <div class="table table-striped table-sm">
+          <%= render 'shared/shedule' %>
+        </div>
       </main>
     </div>
   </div>
 <% else %>
-  <%# <%= render 'devise/sessions/new' %> %>
+  <%= link_to "Sign up now!", new_user_session_path, class: "btn btn-lg btn-primary" %>
 <% end %>
