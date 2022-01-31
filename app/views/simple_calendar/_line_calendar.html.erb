@@ -11,8 +11,10 @@
       <th></th>
         <% date_range.slice(0, 31).each do |day| %>
           <th>
-            <%= t('date.abbr_day_names')[day.wday] %></br>
-            <%= day.day %>
+            <div class=<%="holiday" if @holidays.include?(day.to_s)%>>
+              <%= t('date.abbr_day_names')[day.wday] %></br>
+              <%= day.day.to_s + "#{"*" if @preholidays.include?(day.to_s)}"%>
+            </div>
           </th>
         <% end %>
       </tr>

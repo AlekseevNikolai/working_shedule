@@ -19,6 +19,7 @@ class WorkdaysController < ApplicationController
   def create
     user = User.find_by_id(workday_params[:user_id])
     @workday = user.workdays.new(workday_params)
+    holiday_work
     if @workday.save
       flash[:success] = "Смена добавлена"
       redirect_to root_path
@@ -50,6 +51,10 @@ class WorkdaysController < ApplicationController
     redirect_to root_path
   end
 
+  def update_all_holidays
+    Workday.update_all_holidays
+  end
+
   private
   def workday_params
     params.require(:workday).permit(:user_id, :shift_code, :date)
@@ -71,4 +76,9 @@ class WorkdaysController < ApplicationController
     users
   end
 
+  def holiday_work
+    all_holidays = Holidays.new
+    @workday.holiday = true if all_holidays.holidays.include? @workday.date.to_date.to_s
+    @workday.preholiday = true if all_holidays.preholidays.include? @workday.date.to_date.to_s
+  end
 end
