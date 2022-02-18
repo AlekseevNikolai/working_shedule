@@ -1,0 +1,38 @@
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2">Статистика переработок</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <%= form_with url: statistics_path, method: :get do |form| %>
+            <%= form.label :start_date, "С" %>
+            <%= form.text_field :start_date, placeholder: "#{@date_range.first}" %>
+            <%= form.label :end_date, "По" %>
+            <%= form.text_field :end_date, placeholder: "#{@date_range.last}" %>
+            <%= form.submit "Обновить" %>
+        <% end %>
+    </div>
+  </div>
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">ФИО</th>
+        <th scope="col">Фактически отработанные часы</th>
+        <th scope="col">Плановые рабочие часы</th>
+        <th scope="col">Работа в праздничные дни</th>
+        <th scope="col">Переработки + / Недоработки -</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @statistics.each_with_index do |statistic, index|%>
+        <tr>
+          <th><%= index+1 %></th>
+          <th><%= statistic.user.last_name + " " + statistic.user.first_name %></th>
+          <th><%= statistic.fact_hours %></th>
+          <th><%= statistic.plan_hours %></th>
+          <th><%= statistic.holiday_hours %></th>
+          <th><%= statistic.overworking_hours %></th>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</main>

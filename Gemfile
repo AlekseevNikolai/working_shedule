@@ -61,3 +61,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'sprockets'
 gem 'simple_form'
 gem 'whenever', require: false
+gem 'nokogiri'
+gem 'open-uri'

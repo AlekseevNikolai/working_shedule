@@ -1,0 +1,33 @@
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <h1 class="h2">Статистика переработок</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+
+    </div>
+  </div>
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">ФИО</th>
+        <th scope="col">Фактически отработанные часы</th>
+        <th scope="col">Плановые рабочие часы</th>
+        <th scope="col">Работа в праздничные дни</th>
+        <th scope="col">Переработки + / Недоработки -</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= @users.each_with_index do |user, index|%>
+      <% @statistic = Statistic.new(user) %>
+        <tr>
+          <th><%= index+1 %></th>
+          <th><%= user.last_name + " " + user.first_name %></th>
+          <th><%= @statistic.fact_hours %></th>
+          <th><%= @statistic.plan_hours %></th>
+          <th><%= @statistic.holiday_hours %></th>
+          <th><%= @statistic.overworking_hours %></th>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</main>

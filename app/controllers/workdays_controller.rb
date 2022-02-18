@@ -5,8 +5,14 @@ class WorkdaysController < ApplicationController
   before_action :selected_user, only: :create
 
   def index
-    # start_date = Date.today
-    # @workdays  = current_user.workdays.where(date: start_date.at_beginning_of_month..start_date.end_of_month)
+    @calendar = SimpleCalendar::LineCalendar.new(self, {})
+    @start_date = Date.today
+    @users = User.all
+    @workdays = Workday.all
+    all_holidays = Holidays.new(@start_date.year) #Запускает API, нужно вынести 
+    @holidays = all_holidays.holidays
+    @weekends = all_holidays.weekends
+    @preholidays = all_holidays.preholidays
   end
   
   def new
@@ -76,9 +82,10 @@ class WorkdaysController < ApplicationController
     users
   end
 
+  #Костылище
   def holiday_work
-    all_holidays = Holidays.new
-    @workday.holiday = true if all_holidays.holidays.include? @workday.date.to_date.to_s
-    @workday.preholiday = true if all_holidays.preholidays.include? @workday.date.to_date.to_s
+    all_holidays = Holidays.new(workday_params[:date].to_date.year)
+    @workday.holiday = true if all_holidays.holidays.include? @workday.date.to_date
+    @workday.preholiday = true if all_holidays.preholidays.include? @workday.date.to_date
   end
 end
