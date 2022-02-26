@@ -8,22 +8,28 @@ class Statistic
 
   def initialize(user, date_range)
     @user = find_user(user)
-    @date_range = date_range
-    @workdays = set_workdays(user, workdays_date_range(@date_range))
-    @all_holidays = Holidays.new(date_range.last.year)
-    @date_with_working_hours = set_date_with_working_hours(create_date_hash(@date_range))
+    @date_range = correction_date_range(date_range)
+    if !@date_range.nil?
+      @workdays = set_workdays(user, workdays_date_range(@date_range))
+      @all_holidays = Holidays.new(@date_range.last.year)
+      @date_with_working_hours = set_date_with_working_hours(create_date_hash(@date_range))
+    end
   end
 
   def fact_hours
-    @date_with_working_hours.values.sum - holiday_hours - @workdays.select {|workday| workday[:preholiday] == true}.count
+    return 0 if @date_range.nil?
+    # @date_with_working_hours.values.sum - @workdays.select {|workday| (workday[:preholiday] == true && !["ВЫХ", "ОТП"].include?(workday[:shift_code]) )}.count
+    @date_with_working_hours.values.sum
   end
 
   def plan_hours
-    short_day = @workdays.select {|workday| workday[:preholiday] == true}
-    (@date_range.to_a - @all_holidays.weekends).count * 8 - short_day.count
+    return 0 if @date_range.nil?
+    short_day = @workdays.drop(1).select {|workday| workday[:preholiday] == true}
+    (@date_range.to_a - @all_holidays.weekends).count * 8 - short_day.count - vacation_working_hours
   end
 
   def holiday_hours
+    return 0 if @date_range.nil?
     # (@workdays.map {|i| i.date.to_date} & @all_holidays.holidays).count
     hours = []
     holidays = @date_with_working_hours.keys & @all_holidays.holidays
@@ -36,7 +42,7 @@ class Statistic
   end
 
   def overworking_hours
-    plan_hours - fact_hours
+    -(plan_hours - fact_hours) - holiday_hours
   end
 
   private
@@ -50,13 +56,17 @@ class Statistic
   end
 
   def shift_code_to_hours(workday)
-    if workday.shift_code == ("ГН24" || "ОТП")
+    case workday.shift_code
+    when "ГН24"
       return [8]
-    elsif workday.shift_code == "Н048"
+    when "Н048"
       return [14, 9]
-    else
-      raise "Ошибка данных"
+    when "Д013"
+      return [11]
+    when "ВЫХ", "ОТП"
+      return [0]
     end
+    raise "Неизвестный код #{workday.shift_code}"
   end
 
   #Создает хэш: key - дата, value - отработанные в эту дату часы
@@ -91,6 +101,13 @@ class Statistic
     @workdays ||= user.workdays.where(date: date_range)
   end
 
+  def vacation_working_hours
+    vacations = @workdays.drop(1).select {|workday| workday[:shift_code] == "ОТП"}
+    vacations_on_preholidays = vacations.select {|workday| @all_holidays.preholidays.include? workday[:date]}.count
+    vacations_on_workdays = vacations.select {|workday| !(@all_holidays.weekends.include? workday[:date])}.count * 8
+    vacations_on_workdays - vacations_on_preholidays
+  end
+
   def calculate_weekdays(date_range)
     result = 0
     date_range.each do |day|
@@ -101,12 +118,13 @@ class Statistic
     result
   end
 
-  def is_start_of_month?(day)
-    day["date"] == day["date"].start_of_month
-  end
-
-  def is_end_of_month?(day)
-    day["date"] == day["date"].end_of_month
+  def correction_date_range(date_range)
+    if @user.hired_date >= date_range.first && @user.hired_date <= date_range.last
+      return (@user.hired_date.to_date .. date_range.last)
+    elsif @user.hired_date > date_range.last
+      return nil
+    end 
+    date_range
   end
   
 end

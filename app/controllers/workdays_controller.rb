@@ -18,14 +18,14 @@ class WorkdaysController < ApplicationController
   def new
     @workday = Workday.new(date: params[:day])
     @users = sorted_users
-    @shift_codes = [["09:00 - 18:00", "ГН24"], ["09:00 - 09:00", "Н048"]]
+    @shift_codes = [["09:00 - 18:00", "ГН24"], ["09:00 - 09:00", "Н048"], ["Отпуск", "ОТП"]]
     respond_modal_with @workday
   end
 
   def create
     user = User.find_by_id(workday_params[:user_id])
     @workday = user.workdays.new(workday_params)
-    holiday_work
+    @workday = @workday.holiday_work
     if @workday.save
       flash[:success] = "Смена добавлена"
       redirect_to root_path
@@ -37,7 +37,7 @@ class WorkdaysController < ApplicationController
   def edit
     @workday = Workday.find(params[:id])
     @users = sorted_users
-    @shift_codes = [["09:00 - 18:00", "ГН24"], ["09:00 - 09:00", "Н048"]]
+    @shift_codes = [["09:00 - 18:00", "ГН24"], ["09:00 - 09:00", "Н048"], ["Отпуск", "ОТП"]]
     respond_modal_with @workday
   end
 
@@ -80,12 +80,5 @@ class WorkdaysController < ApplicationController
       users << ["#{user[:last_name]} #{user[:first_name]}", user[:id]]
     end
     users
-  end
-
-  #Костылище
-  def holiday_work
-    all_holidays = Holidays.new(workday_params[:date].to_date.year)
-    @workday.holiday = true if all_holidays.holidays.include? @workday.date.to_date
-    @workday.preholiday = true if all_holidays.preholidays.include? @workday.date.to_date
   end
 end

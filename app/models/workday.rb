@@ -2,9 +2,13 @@ class Workday < ApplicationRecord
   belongs_to :user
   validates :date, presence: true
   validates :shift_code, presence: true
+  # after_create :holiday_work
+
+  # С attr_accessor не устанавливаеься date при create
+  # attr_accessor :date
 
   def start_time
-    self.date ##Where 'start' is a attribute of type 'Date' accessible through MyModel's relationship
+    self.date
   end
 
   # Set cron by whenever in shedule.rb
@@ -25,4 +29,13 @@ class Workday < ApplicationRecord
       end
     end
   end
+
+  # Костылище
+  def holiday_work
+    all_holidays = Holidays.new(self.date.to_date.year)
+    self.holiday = true if all_holidays.holidays.include? self.date.to_date
+    self.preholiday = true if all_holidays.preholidays.include? self.date.to_date
+    self
+  end
+
 end
